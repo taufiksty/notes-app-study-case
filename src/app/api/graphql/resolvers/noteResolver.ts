@@ -1,11 +1,11 @@
-import prisma from '@/prisma/client';
+import prisma from '../../../../../prisma/client';
 
 const noteResolvers = {
   Query: {
     notes: async () => {
       return await prisma.note.findMany();
     },
-    note: async (_: any, { id }: { id: number }) => {
+    note: async (_: any, { id }: { id: string }) => {
       return await prisma.note.findUnique({ where: { id } });
     },
   },
@@ -18,11 +18,11 @@ const noteResolvers = {
     },
     updateNote: async (
       _: any,
-      { id, title, body }: { id: number; title: string; body?: string }
+      { id, title, body }: { id: string; title: string; body?: string }
     ) => {
       return await prisma.note.update({ where: { id }, data: { title, body } });
     },
-    deleteNote: async (_: any, { id }: { id: number }) => {
+    deleteNote: async (_: any, { id }: { id: string }) => {
       return await prisma.note.delete({ where: { id } });
     },
   },

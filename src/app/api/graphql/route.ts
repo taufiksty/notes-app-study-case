@@ -1,16 +1,14 @@
-import { ApolloServer } from 'apollo-server-micro';
-import typeDefs from '@/graphql/schema';
-import noteResolvers from '@/graphql/resolvers/noteResolver';
+import { ApolloServer } from '@apollo/server';
+import typeDefs from '@/app/api/graphql/schema';
+import noteResolvers from '@/app/api/graphql/resolvers/noteResolver';
+import { startServerAndCreateNextHandler } from '@as-integrations/next';
+import { NextRequest } from 'next/server';
 
 const server = new ApolloServer({
   typeDefs,
   resolvers: noteResolvers,
 });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+const handler = startServerAndCreateNextHandler<NextRequest>(server);
 
-export default server.createHandler({ path: '/api/graphql' });
+export { handler as GET, handler as POST };

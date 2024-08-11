@@ -15,12 +15,35 @@ import {
   Flex,
   Button,
   keyframes,
+  Spinner,
+  useToast,
 } from '@chakra-ui/react';
-import notes from '../../data';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
+import { useQuery } from '@apollo/client';
+import { Note } from '@/types/note';
+import { GET_NOTES } from '@/graphql/queries';
+import dateFormat from '@/utils/dateFormat';
 
 export default function AllNotesView() {
+  const { data, loading, error } = useQuery(GET_NOTES);
+  const notes: Note[] = (data?.notes.slice() || []).sort(
+    (a: Note, b: Note) =>
+      new Date(Number(a.createdAt)).getTime() -
+      new Date(Number(b.createdAt)).getTime()
+  );
+
+  const toast = useToast();
+  if (error) {
+    toast({
+      title:
+        'Sorry, it seems like something went wrong. Please refresh the page.',
+      status: 'error',
+      isClosable: true,
+      position: 'top',
+    });
+  }
+
   const clickAnimation = keyframes({
     '0%': { transform: 'scale(1)' },
     '50%': { transform: 'scale(0.95)' },
@@ -57,11 +80,13 @@ export default function AllNotesView() {
           <Button colorScheme="teal">Add note</Button>
         </Link>
       </Flex>
-      {notes.length === 0 ? (
+      {loading ? (
+        <Spinner my="24" />
+      ) : notes.length === 0 ? (
         <Text my="24">No notes found.</Text>
       ) : (
         <SimpleGrid columns={[1, 2, 3]} mt="4" spacing={6}>
-          {notes.map((note) => (
+          {notes.map((note: Note) => (
             <Link key={note.id} href={`/notes/${note.id}`} passHref>
               <Card
                 height="100%"
@@ -90,7 +115,7 @@ export default function AllNotesView() {
                 </CardBody>
                 <CardFooter>
                   <Text fontSize="sm" textAlign="right" width="full">
-                    {note.updatedAt.toLocaleDateString()}
+                    {dateFormat(note.updatedAt)}
                   </Text>
                 </CardFooter>
               </Card>
