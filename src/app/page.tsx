@@ -24,6 +24,7 @@ import { useQuery } from '@apollo/client';
 import { Note } from '@/types/note';
 import { GET_NOTES } from '@/graphql/queries';
 import dateFormat from '@/utils/dateFormat';
+import CardNote from '@/components/AllNotes/CardNote';
 
 export default function AllNotesView() {
   const { data, loading, error } = useQuery(GET_NOTES);
@@ -43,12 +44,6 @@ export default function AllNotesView() {
       position: 'top',
     });
   }
-
-  const clickAnimation = keyframes({
-    '0%': { transform: 'scale(1)' },
-    '50%': { transform: 'scale(0.95)' },
-    '100%': { transform: 'scale(1)' },
-  });
 
   return (
     <Container maxW="container.lg" py={8}>
@@ -87,39 +82,7 @@ export default function AllNotesView() {
       ) : (
         <SimpleGrid columns={[1, 2, 3]} mt="4" spacing={6}>
           {notes.map((note: Note) => (
-            <Link key={note.id} href={`/notes/${note.id}`} passHref>
-              <Card
-                height="100%"
-                border="1px"
-                borderColor="white"
-                borderRadius="md"
-                _hover={{ boxShadow: 'lg', transform: 'translateY(-4px)' }}
-                _active={{ animation: `${clickAnimation} 0.2s ease` }}
-                _focus={{ boxShadow: 'outline' }}
-                transition="all 0.2s ease"
-              >
-                <CardHeader>
-                  <Heading size="md">
-                    {' '}
-                    {note.title.length > 20
-                      ? note.title.substring(0, 20) + '...'
-                      : note.title}
-                  </Heading>
-                </CardHeader>
-                <CardBody>
-                  <Text fontSize="sm">
-                    {note.body.length > 100
-                      ? note.body.substring(0, 100) + '...'
-                      : note.body}
-                  </Text>
-                </CardBody>
-                <CardFooter>
-                  <Text fontSize="sm" textAlign="right" width="full">
-                    {dateFormat(note.updatedAt)}
-                  </Text>
-                </CardFooter>
-              </Card>
-            </Link>
+            <CardNote key={note.id} {...note} />
           ))}
         </SimpleGrid>
       )}
