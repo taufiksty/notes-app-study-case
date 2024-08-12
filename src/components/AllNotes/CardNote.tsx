@@ -11,13 +11,7 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 
-export default function CardNote({
-  id,
-  title,
-  body,
-  createdAt,
-  updatedAt,
-}: Note) {
+export default function CardNote({ id, title, body, createdAt }: Note) {
   const clickAnimation = keyframes({
     '0%': { transform: 'scale(1)' },
     '50%': { transform: 'scale(0.95)' },
@@ -48,8 +42,8 @@ export default function CardNote({
           </Text>
         </CardBody>
         <CardFooter>
-          <Text fontSize="sm" textAlign="right" width="full">
-            {dateFormat(updatedAt)}
+          <Text fontSize="xs" textAlign="right" width="full" color="gray.500">
+            Created at {dateFormat(createdAt)}
           </Text>
         </CardFooter>
       </Card>
